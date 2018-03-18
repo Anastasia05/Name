@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 template <typename myTip>
@@ -15,12 +16,16 @@ public:
 	{
 		if (top == NULL)
 		{
-			Stack(x);
+			top = new ElementStack;
+			top->znach = x;
+			size = 1;
+			top->pred = NULL;
 			return;
 		}
 		ElementStack* p = new ElementStack;
 		p->pred = top;
 		p->znach = x;
+		size++;
 		top = p;
 	}
 
@@ -87,7 +92,12 @@ public:
 	{
 		if (nach == NULL)
 		{
-			Queue(x);
+			nach = new ElementQueue;
+			nach->pred = NULL;
+			nach->sled = NULL;
+			nach->znach = x;
+			kon = nach;
+			size = 1;
 			return;
 		}
 		ElementQueue* p = new ElementQueue;
@@ -96,6 +106,7 @@ public:
 		p->sled = NULL;
 		p->znach = x;
 		nach = p;
+		size++;
 	}
 	myTip pull()   // Вытащить элемент
 	{
@@ -136,7 +147,7 @@ public:
 	}
 	bool pust()      // Пуст ли?
 	{
-		if (!size)
+		if (size == 0)
 			return true;
 		return false;
 	}
@@ -152,15 +163,191 @@ public:
 	~Queue()
 	{
 		del();
-	};
+	}
 };
 
+////////////////
+
+template <typename myTip>
+class Dek
+{
+	int size;
+	struct ElementDek
+	{
+		myTip znach;
+		ElementDek* pred;
+		ElementDek* sled;
+	} *nach, *kon;
+public:
+	void Vnach(myTip x) // Положить в начало
+	{
+		if (!nach)
+		{
+			nach = new ElementDek;
+			nach->pred = NULL;
+			nach->sled = NULL;
+			nach->znach = x;
+			kon = nach;
+			size = 1;
+			return;
+		}
+		ElementDek* p = new ElementDek;
+		p->pred = nach;
+		nach->sled = p;
+		p->sled = NULL;
+		p->znach = x;
+		size++;
+		nach = p;
+	}
+	void Vkon(myTip x)
+	{
+		if (!nach)
+		{
+			nach = new ElementDek;
+			nach->pred = NULL;
+			nach->sled = NULL;
+			nach->znach = x;
+			kon = nach;
+			size = 1;
+			return;
+		}
+		ElementDek* p = new ElementDek;
+		p->sled = kon;
+		kon->pred = p;
+		p->pred = NULL;
+		p->znach = x;
+		size++;
+		kon = p;
+	}
+	myTip Iznach()
+	{
+		if (size == 0)
+		{
+			cout << "Дек пуст!\n";
+			return NULL;
+		}
+		myTip x = nach->znach;
+		ElementDek* p = nach;
+		if (nach->pred != NULL)
+			(nach->pred)->sled = NULL;
+		nach = nach->pred;
+		if (size == 1)
+		{
+			delete p;
+			nach = NULL;
+			kon = NULL;
+		}
+		else
+			delete p;
+		size--;
+		return x;
+	}
+	myTip Izkon()
+	{
+		if (!size)
+		{
+			cout << "Дек пуст!\n";
+			return NULL;
+		}
+		myTip x = kon->znach;
+		ElementDek* p = kon;
+		if (kon->sled != NULL)
+			(kon->sled)->pred = NULL;
+		kon = kon->sled;
+		if (size == 1)
+		{
+			delete p;
+			nach = NULL;
+			kon = NULL;
+		}
+		else
+			delete p;
+		size--;
+		return x;
+	}
+	void del()            // Очистка дека
+	{
+		if (size != 0)
+		{
+			ElementDek* p;
+			while (nach != NULL)
+			{
+				p = nach;
+				nach = nach->pred;
+				delete p;
+			}
+			size = 0;
+		}
+	}
+	bool pust()
+	{
+		if (size == 0)
+			return true;
+		return false;
+	}
+	Dek(myTip x)
+	{
+		nach = new ElementDek;
+		nach->pred = NULL;
+		nach->sled = NULL;
+		nach->znach = x;
+		kon = nach;
+		size = 1;
+	}
+	~Dek()
+	{
+		del();
+	}
+};
 
 
 
 int main()
 {
 	setlocale(0, "");
+	Queue<char> bukva('\0');
+	Queue<char> cifra('\0');
+	Queue<char> znak('\0');
+	bool Z1 = false, Z2 = false, Z3 = false;
+	ifstream fin("file.txt");
+	while (!fin.eof())
+	{
+		char x = fin.get();
+		if (((x >= -64) && (x <= -1)) || (x == -88) || (x == -72) || ((x >= 65) && (x <= 90)) || ((x >= 95) && (x <= 122)))
+		{
+			if (Z1 == false)
+			{
+				bukva.del();
+				Z1 = true;
+			}
+			bukva.push(x);
+		}
+		if ((x >= 48) && (x <= 57))
+		{
+			if (Z2 == false)
+			{
+				cifra.del();
+				Z2 = true;
+			}
+			cifra.push(x);
+		}
+		if (((x >= 33) && (x <= 47)) || ((x >= 58) && (x <= 64)) || ((x >= 91) && (x <= 96)) || ((x >= 123) && (x <= 126)) || (x == -106))
+		{
+			if (Z3 == false)
+			{
+				znak.del();
+				Z3 = true;
+			}
+			znak.push(x);
+		}
+	}
+	fin.close();
+	while (bukva.pust() == false)
+		cout << bukva.pull();
+	while (cifra.pust() == false)
+		cout << cifra.pull();
+	while (znak.pust() == false)
+		cout << znak.pull();
 	return 0;
 
 }
