@@ -58,6 +58,16 @@ public:
 			top = NULL;
 		}
 	}
+	void show()
+	{
+		ElementStack *p = top;
+		while (p)
+		{
+			cout << p->znach << " ";
+			p = p->pred;
+		}
+		cout << endl;
+	}
 	int getSize()        // Какой размер?
 	{
 		return size;
@@ -129,6 +139,16 @@ public:
 			delete p;
 		size--;
 		return x;
+	}
+	void show()
+	{
+		ElementQueue *p = nach;
+		while (p)
+		{
+			cout << p->znach << " ";
+			p = p->pred;
+		}
+		cout << endl;
 	}
 	void del()      // Очистка очереди
 	{
@@ -268,6 +288,16 @@ public:
 			delete p;
 		size--;
 		return x;
+	}
+	void show()
+	{
+		ElementDek *p = nach;
+		while (p)
+		{
+			cout << p->znach << " ";
+			p = p->pred;
+		}
+		cout << endl;
 	}
 	void del()            // Очистка дека
 	{
