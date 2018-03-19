@@ -145,6 +145,10 @@ public:
 			nach = NULL;
 		}
 	}
+	int Size()
+	{
+		return size;
+	}
 	bool pust()      // ѕуст ли?
 	{
 		if (size == 0)
@@ -313,7 +317,7 @@ int main()
 	while (!fin.eof())
 	{
 		char x = fin.get();
-		if (((x >= -64) && (x < -1)) || (x == -88) || (x == -72) || ((x >= 65) && (x <= 90)) || ((x >= 95) && (x <= 122)))
+		if (((x >= -64) && (x <= -1)) || (x == -88) || (x == -72) || ((x >= 65) && (x <= 90)) || ((x >= 95) && (x <= 122)))
 		{
 			if (Z1 == false)
 			{
@@ -343,7 +347,14 @@ int main()
 	}
 	fin.close();
 	while (bukva.pust() == false)
+	{
+		if (bukva.Size() == 1)
+		{
+			bukva.pull();
+			break;
+		}
 		cout << bukva.pull();
+	}
 	while (cifra.pust() == false)
 		cout << cifra.pull();
 	while (znak.pust() == false)
